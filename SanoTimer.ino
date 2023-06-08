@@ -7,15 +7,15 @@
 #include <addons/RTDBHelper.h> // Provide the RTDB payload printing info and other helper functions.
 //Define necessary informations
 /* 1. Define the WiFi credentials */
-#define WIFI_SSID "Air5650v3"
-#define WIFI_PASSWORD "saralarzu1980"
+#define WIFI_SSID "WIFI"
+#define WIFI_PASSWORD "PASSWORD"
 /* 2. Define the API Key */
-#define API_KEY "AIzaSyB-8Gjiwm7yFAJvg0S4-0ZSz5cz-GRS2J4"//Firebase Apikey
+#define API_KEY ""//Firebase Apikey
 /* 3. Define the RTDB URL */
-#define DATABASE_URL "esp8266-bd268-default-rtdb.firebaseio.com"
+#define DATABASE_URL ""
 /* 4. Define the user Email and password that alreadey registerd or added in your project in Authentication*/
-#define USER_EMAIL "iremsaral2013@gmail.com"
-#define USER_PASSWORD "19Hunat."
+#define USER_EMAIL ""
+#define USER_PASSWORD ""
 // Define Firebase Data object
 FirebaseData fbdo;
 FirebaseAuth auth;
