@@ -5,7 +5,7 @@
 
 This project is currently in development...
 
-Please note that this code is still a work in progress and may contain bugs or incomplete features. Use it at your own risk.
+Please note that this code is still a work in progress and may contain bugs or incomplete features.
 ### Description
 This project demonstrates how to connect a NodeMCU board to Wi-Fi and access a Firebase database. It utilizes the following libraries:
 
