@@ -3,12 +3,12 @@
 #include <WiFiUdp.h>
 #include <ESP8266WiFi.h>
 #include <NTPClient.h>
-#include <addons/TokenHelper.h> // Provide the token generation process info.
-#include <addons/RTDBHelper.h> // Provide the RTDB payload printing info and other helper functions.
+#include <addons/TokenHelper.h>
+#include <addons/RTDBHelper.h>
 //Define necessary informations
 /* 1. Define the WiFi credentials */
-#define WIFI_SSID "WIFI"
-#define WIFI_PASSWORD "PASSWORD"
+#define WIFI_SSID ""
+#define WIFI_PASSWORD ""
 /* 2. Define the API Key */
 #define API_KEY ""//Firebase Apikey
 /* 3. Define the RTDB URL */
@@ -55,30 +55,22 @@ void networkStatusRequestCallback()
   // Set the network status
   fbdo.setNetworkStatus(WiFi.status() == WL_CONNECTED);
 }
-
+//Tamamlandı
 void ConnectFirebase() {
   Serial_Printf("Firebase Client v%s\n\n", FIREBASE_CLIENT_VERSION);
   ssl_client.setInsecure();
-  /* Assign the api key (required) */
   config.api_key = API_KEY;
-  /* Assign the user sign in credentials */
   auth.user.email = USER_EMAIL;
   auth.user.password = USER_PASSWORD;
-  /* Assign the RTDB URL (required) */
   config.database_url = DATABASE_URL;
-  /* Assign the callback function for the long running token generation task */
   config.token_status_callback = tokenStatusCallback; // see addons/TokenHelper.h
-  /* fbdo.setExternalClient and fbdo.setExternalClientCallbacks must be called before Firebase.begin */
-  /* Assign the pointer to global defined external SSL Client object */
   fbdo.setExternalClient(&ssl_client);
-  /* Assign the required callback functions */
   fbdo.setExternalClientCallbacks(ConnectWifi, networkStatusRequestCallback);
-  // Comment or pass false value when WiFi reconnection will control by your code or third party library
   Firebase.reconnectWiFi(true);
   Firebase.setDoubleDigits(5);
   Firebase.begin(&config, &auth);
 }
-
+//Tamamlandı
 void TestMode() {
   String command = "normal";
   for (int i = 0; i < sizeof(ledPins) / sizeof(ledPins[0]); i++) {
@@ -86,11 +78,11 @@ void TestMode() {
     delay(500); // 0.5 saniye bekle
     digitalWrite(ledPins[i], LOW); // LED'i söndür
   }
+  //Serial.println("testtesttesttesttest");
   Serial_Printf("Completed mode...\n", Firebase.set(fbdo, F("/command"), command) ? "ok" : fbdo.errorReason().c_str());
 }
-
+//Tamamlandı
 void MannualMode() {
-
   int duration = 0;
   int lednum = 0;
   int statu = 0;
@@ -154,121 +146,82 @@ struct valve {
 const int value = 5;
 valve valves[5];
 
-void writeData() {
-  Serial.println("writedata");
-  for (int i = 1; i <= 5; i++) {
-    for (int j = 1; j <= 5; j++) {
+void writed() {
 
-      Serial.println(valves[i].program[j].starthour);
-    }
-  }
-}
-
-bool controlTime(int startTime, int stopTime) {
-  Serial.print("ControlTime");
-  timeClient.update();
   String currentDay = daysOfTheWeek[timeClient.getDay()];
   int currentHour = timeClient.getHours();
   int currentMinutes = timeClient.getMinutes();
   int currentSeconds = timeClient.getSeconds();
-  if (startTime <= currentHour && stopTime >= currentHour) {
-    Serial.println("true");
-    return true;
 
-  }
-  else {
-    Serial.println("false");
-    return false;
-  }
-}
+  for (int j = 1; j <= 5; j++) {
+    for (int i = 1; i <= 5; i++) {
+      if (valves[j].program[i].gun.equals(currentDay) && valves[j].program[i].starth <= currentHour && currentMinutes >=  valves[j].program[i].startm && currentMinutes <=  valves[j].program[i].stopm && currentHour <= valves[j].program[i].stoph) {
 
-void ControlDate() {
-  Serial.print("ControlDate");
-    for (int i = 1; i <= 5; i++) { //valves
-      for (int j = 1; j <= 5; j++) { //program
-        bool conc = controlTime(valves[i].program[j].starth, valves[i].program[j].stoph);
-        if (conc) {
-          digitalWrite(ledPins[i - 1], HIGH);
-          Serial.println("valves");
-          Serial.print(i);
-          Serial.println("Programs");
-          Serial.print(j);
-        }
+        Serial.println("valve");
+        Serial.print(j);
+        Serial.print("program");
+        Serial.print(i);
+        delay(1000);
+
       }
-    }
-
-}
-
-void ConvertInt() {
-  Serial.println("ConvertInt");
-  //Bir önceki fonksiyonda String olarak okunan başlangıç ve duruş saatlerini saat,dakika olarak ayırıp integera çeviririm.
-  for (int i = 1; i <= 5; i++) { //valves
-    for (int j = 1; j <= 5; j++) { //program
-      String readStartHour = valves[i].program[j].starthour;
-      String hourVal = readStartHour.substring(0, 2);
-      String MinVal = readStartHour.substring(3);
-      valves[i].program [j].starth = hourVal.toInt();
-      valves[i].program[j].startm = MinVal.toInt();
-
-      String readStopHour = valves[i].program[j].stophour;
-      String stopHourVal = readStopHour.substring(0, 2);
-      String stopMinVal = readStopHour.substring(3);
-      valves[i].program[j].stoph = stopHourVal.toInt();
-      valves[i].program[j].stopm = stopMinVal.toInt();
-      Serial.println(i);
-      Serial.println(valves[i].program[j].starth);
-      Serial.println( valves[i].program[j].stoph);
 
     }
   }
-  Serial.println("Bitti");
-
-    }
 
 
-
-
-void  ProgramProcess() {
+}
+void ProgramProcess() {
   Serial.println("ProgramProcess");
-  //Serial.println(timeClient.getFormattedTime());
+  String currentDay = daysOfTheWeek[timeClient.getDay()];
+  int currentHour = timeClient.getHours();
+  int currentMinutes = timeClient.getMinutes();
+  int currentSeconds = timeClient.getSeconds();
+  timeClient.update();
   if (Firebase.ready()) {
-    for (int j = 1; j <= 5; j++)
-    {
+    for (int j = 1; j <= 5; j++) {
       String valveName = "/mannualmode/valve" + String(j);
       valves[j].names = "valve" + String(j);
-      //Serial.println(valves[j].names);
+
       if (Firebase.get(fbdo, valveName)) {
-        //Serial.println(valves[0].names);
         for (int i = 1; i <= 5; i++) {
           String programPath = "/mannualmode/" + valves[j].names + "/program" + String(i);
-          //  Serial.println(programPath);
+
           if (Firebase.get(fbdo, programPath + "/day")) {
             if (fbdo.dataType() == "string") {
               valves[j].program[i].gun = fbdo.stringData();
-              //    Serial.println(valves[j].program[i].gun.c_str());
             }
           }
-          if (Firebase.get(fbdo, programPath + "/start" )) {
-            if (fbdo.dataType() == "string") {
-              valves[j].program[i].starthour = fbdo.stringData();
-              //  Serial.println(valves[j].program[i].starthour.c_str());
+
+          if (Firebase.get(fbdo, programPath + "/start")) {
+            {
+
+              String starth = fbdo.stringData().substring(0, 2);
+              String startm = fbdo.stringData().substring(3);
+              valves[j].program[i].starth = starth.toInt();
+              valves[j].program[i].startm = startm.toInt();
+
+              Serial.println(valves[j].program[i].starth);
+              Serial.println(valves[j].program[i].startm);
+
             }
-          }
-          if (Firebase.get(fbdo, programPath + "/stop")) {
-            if (fbdo.dataType() == "string") {
-              valves[j].program[i].stophour = fbdo.stringData();
-              //Serial.println(valves[j].program[i].stophour.c_str());
+
+            if (Firebase.get(fbdo, programPath + "/stop")) {
+
+              String stoph = fbdo.stringData().substring(0, 2);
+              String stopm = fbdo.stringData().substring(3);
+              valves[j].program[i].stoph = stoph.toInt();
+              valves[j].program[i].stopm = stopm.toInt();
+
+              Serial.println(valves[j].program[i].stoph);
+              Serial.println(valves[j].program[i].stopm);
+
             }
           }
         }
       }
     }
   }
-   writeData();
-  //ConvertInt();
 }
-
-
 
 void setup() {
 
@@ -277,29 +230,25 @@ void setup() {
   ConnectFirebase();
   timeClient.begin();
   for (int i = 0; i < sizeof(ledPins) / sizeof(ledPins[0]); i++) {
-    pinMode(ledPins[i], OUTPUT); // LED pinlerini çıkış olarak ayarla
-    // Serial.println(i);
-  }
+    pinMode(ledPins[i], OUTPUT); // LED pinlerini çıkış olarak ayarla  }
 
+  }
+  ProgramProcess();
 }
 
-
 void loop() {
-  // Firebase.ready() should be called repeatedly to handle authentication tasks.
 
-  if (Firebase.ready() && (millis() - sendDataPrevMillis > 1500 || sendDataPrevMillis == 0))
+  writed();
+  if (Firebase.ready() && (millis() - sendDataPrevMillis > 300000 || sendDataPrevMillis == 0))
   {
     sendDataPrevMillis = millis();
-
-    //String data="irem";
-    //Serial_Printf("Set bool... %s\n", Firebase.set(fbdo, F("/test/data"),data) ? "ok" : fbdo.errorReason().c_str());
-    //get data
     String data2;
     if (Firebase.get(fbdo, F("/command")))
     {
       if (fbdo.dataType() == "string")
       {
         data2 = fbdo.stringData();
+
         Serial_Printf("Data: %s\n", data2.c_str());
         if (data2 == "test") {
           Serial.println("testmode");
@@ -310,8 +259,7 @@ void loop() {
           MannualMode();
         }
         else if (data2 == "normal") {
-          //Serial.println("normalmode");
-          ProgramProcess();
+          writed();
         }
       }
     }
