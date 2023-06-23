@@ -23,5 +23,8 @@ To get started with this project, follow these steps:
 3. Set up your Firebase database and obtain the necessary credentials (API key, database URL, etc.).
 4. Replace the placeholder code with your own code to read commands from the Firebase database and generate the desired output.
 
+## Database Design
+The database design for the code is depicted in the following image. The maximum number of valves and programs has been automatically set to 5. Please refer to the image for the visual representation of the database structure.
 
+![database](https://github.com/iremSaral/SanoTimer-ArduinoCode/assets/92708146/0275fa13-1c6d-469e-b037-b6f107220523)
 
